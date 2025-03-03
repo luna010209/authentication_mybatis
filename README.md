@@ -69,3 +69,8 @@ security:
               - profile_nickname
 ```
 
+### Mapper with xml file
+```java
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+```
