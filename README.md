@@ -74,3 +74,33 @@ security:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 ```
+
+## [Configuration](src\main\java\com\example\authentication_mybatis\config) and [Handler exception](src\main\java\com\example\authentication_mybatis\exception)
+
+### [Security configuration](src\main\java\com\example\authentication_mybatis\config\SecurityConfig.java)
+```java
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth->{
+                    auth.requestMatchers("...").authenticated();
+                    auth.anyRequest().permitAll();
+                });
+        return http.build();
+    }
+```
+### [Password configuration](src\main\java\com\example\authentication_mybatis\config\PasswordConfig.java)
+```java
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+```
+
+### [Handler exception](src\main\java\com\example\authentication_mybatis\exception\ExceptionController.java)
+```java
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<Object> customExceptionHandler(CustomException e){
+        return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+    }
+```
