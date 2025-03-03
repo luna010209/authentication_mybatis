@@ -104,3 +104,86 @@ mybatis:
         return ResponseEntity.status(e.getStatus()).body(e.getMessage());
     }
 ```
+
+## Create user account
+
+### [Dto](src\main\java\com\example\authentication_mybatis\user\dto)
+```java
+public class UserRequest {
+    private String username;
+    private String password;
+    private String pwConfirm;
+    private String email;
+    private String name;
+}
+
+public class UserDto {
+    private Long id;
+    private String username;
+    private String email;
+    private String name;
+}
+```
+### [Mapper](src\main\java\com\example\authentication_mybatis\user\mapper\UserMapper.java) with xml file
+
+```java
+@Mapper
+public interface UserMapper {
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    void createUser(UserDto dto);
+}
+```
+File [user.xml](src\main\resources\mapper\user.xml)
+```java
+<mapper namespace="com.example.authentication_mybatis.user.mapper.UserMapper">
+
+    <select id="existsByUsername" resultType="boolean" parameterType="string">
+        SELECT COUNT(*) FROM user_account u WHERE u.username=#{username};
+    </select>
+
+    <select id="existsByEmail" resultType="boolean" parameterType="string">
+        SELECT COUNT(*) FROM user_account u WHERE u.email = #{email};
+    </select>
+
+    <insert id="createUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_account(username, email, name)
+        VALUES (#{username}, #{email}, #{name})
+    </insert>
+
+</mapper>
+```
+
+### [User Service](src\main\java\com\example\authentication_mybatis\user\service\UserService.java)
+```java
+@Service
+@RequiredArgsConstructor
+public class UserService implements UserDetailsService {
+    private final PasswordEncoder encoder;
+    private final UserMapper userMapper;
+
+    public UserDto newUser(UserRequest request){
+        if (userMapper.existsByUsername(request.getUsername()))
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Username already exists!");
+        else if (userMapper.existsByEmail(request.getEmail()))
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Email already exists!");
+        else if (!request.getPassword().equals(request.getPwConfirm()))
+            throw new CustomException(HttpStatus.CONFLICT, "Password and password confirm do not match!");
+        UserDto dto = UserDto.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .name(request.getName())
+                .build();
+        userMapper.createUser(dto);
+        return dto;
+    }
+}
+```
+
+### [User Controller](src\main\java\com\example\authentication_mybatis\user\UserController.java)
+```java
+@PostMapping
+    public UserDto newUser(@RequestBody UserRequest request){
+        return userService.newUser(request);
+    }
+```
