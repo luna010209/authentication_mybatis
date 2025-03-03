@@ -5,4 +5,17 @@
 
 <mapper namespace="com.example.authentication_mybatis.user.mapper.UserMapper">
 
+    <select id="existsByUsername" resultType="boolean" parameterType="string">
+        SELECT COUNT(*) FROM user_account u WHERE u.username=#{username};
+    </select>
+
+    <select id="existsByEmail" resultType="boolean" parameterType="string">
+        SELECT COUNT(*) FROM user_account u WHERE u.email = #{email};
+    </select>
+
+    <insert id="createUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_account(username, email, name)
+        VALUES (#{username}, #{email}, #{name})
+    </insert>
+
 </mapper>
