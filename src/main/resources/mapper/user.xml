@@ -18,4 +18,13 @@
         VALUES (#{username}, #{email}, #{name})
     </insert>
 
+    <insert id="userInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO login_info(username, hashedPw, email, name, authority)
+        VALUES (#{username}, #{password}, #{email}, #{name}, #{authority})
+    </insert>
+
+    <select id="findByUsername" resultType="com.example.authentication_mybatis.user.dto.UserLogin" parameterType="string">
+        SELECT * FROM login_info l WHERE l.username=#{username};
+    </select>
+
 </mapper>
