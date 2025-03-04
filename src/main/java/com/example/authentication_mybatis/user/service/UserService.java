@@ -2,6 +2,7 @@ package com.example.authentication_mybatis.user.service;
 
 import com.example.authentication_mybatis.exception.CustomException;
 import com.example.authentication_mybatis.user.dto.UserDto;
+import com.example.authentication_mybatis.user.dto.UserLogin;
 import com.example.authentication_mybatis.user.dto.UserRequest;
 import com.example.authentication_mybatis.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,10 @@ public class UserService implements UserDetailsService {
     private final UserMapper userMapper;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        UserLogin userLogin = userMapper.findByUsername(username);
+        if (userLogin==null)
+            throw new CustomException(HttpStatus.NOT_FOUND, "Username does not exist!!");
+        return userLogin;
     }
 
     public UserDto newUser(UserRequest request){
@@ -34,7 +38,15 @@ public class UserService implements UserDetailsService {
                 .email(request.getEmail())
                 .name(request.getName())
                 .build();
+        UserLogin userLogin = UserLogin.builder()
+                .username(request.getUsername())
+                .password(encoder.encode(request.getPassword()))
+                .email(request.getEmail())
+                .name(request.getName())
+                .authority("ROLE_USER")
+                .build();
         userMapper.createUser(dto);
+        userMapper.userInfo(userLogin);
         return dto;
     }
 }
