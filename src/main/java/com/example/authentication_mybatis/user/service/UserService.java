@@ -5,6 +5,7 @@ import com.example.authentication_mybatis.user.dto.UserDto;
 import com.example.authentication_mybatis.user.dto.UserLogin;
 import com.example.authentication_mybatis.user.dto.UserRequest;
 import com.example.authentication_mybatis.user.mapper.UserMapper;
+import com.example.authentication_mybatis.user.userLogin.UserComponent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class UserService implements UserDetailsService {
     private final PasswordEncoder encoder;
     private final UserMapper userMapper;
+    private final UserComponent userComponent;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserLogin userLogin = userMapper.findByUsername(username);
@@ -48,5 +50,9 @@ public class UserService implements UserDetailsService {
         userMapper.createUser(dto);
         userMapper.userInfo(userLogin);
         return dto;
+    }
+
+    public UserDto userLogin(){
+        return userComponent.userLogin();
     }
 }

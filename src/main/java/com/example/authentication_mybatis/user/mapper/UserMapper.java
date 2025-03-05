@@ -11,5 +11,5 @@ public interface UserMapper {
     void createUser(UserDto dto);
     void userInfo(UserLogin login);
     UserLogin findByUsername(String username);
-
+    UserDto userLogin(String username);
 }

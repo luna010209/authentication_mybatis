@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -15,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 @RequiredArgsConstructor
+@Slf4j
 public class TokenHandler extends OncePerRequestFilter {
     private final TokenUtils tokenUtils;
     private final UserService userService;
@@ -35,6 +37,7 @@ public class TokenHandler extends OncePerRequestFilter {
 
         String token = splitHeader[1];
         String username = tokenUtils.claims(token).getSubject();
+
         UserLogin userLogin = (UserLogin) userService.loadUserByUsername(username);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
