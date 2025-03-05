@@ -20,7 +20,7 @@
 
     <insert id="userInfo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO login_info(username, hashedPw, email, name, authority)
-        VALUES (#{username}, #{password}, #{email}, #{name}, #{authority})
+        VALUES (#{username}, #{hashedPw}, #{email}, #{name}, #{authority})
     </insert>
 
     <select id="findByUsername" resultType="com.example.authentication_mybatis.user.dto.UserLogin" parameterType="string">
