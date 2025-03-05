@@ -236,3 +236,78 @@ public class UserService implements UserDetailsService {
 }
 ```
 
+
+### [Token](src\main\java\com\example\authentication_mybatis\token)
+#### Generate [token](src\main\java\com\example\authentication_mybatis\token\TokenUtils.java)
+```java
+public class TokenUtils {
+    private final Key secretKey;
+    private final JwtParser jwtParser;
+
+    public String generateToken(String username){
+        Instant now = Instant.now();
+        Claims jwtClaims = Jwts.claims()
+                .setSubject(username)
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plusSeconds(60*10)));
+        return Jwts.builder()
+                .setClaims(jwtClaims)
+                .signWith(secretKey)
+                .compact();
+    }
+    public Claims claims(String token){
+        return jwtParser.parseClaimsJws(token).getBody();
+    }
+}
+```
+
+#### Handle filter [token](src\main\java\com\example\authentication_mybatis\token\TokenHandler.java)
+```java
+public class TokenHandler extends OncePerRequestFilter {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String header = request.getHeader("Authorization");
+        String token = splitHeader[1];
+        String username = tokenUtils.claims(token).getSubject();
+        UserLogin userLogin = (UserLogin) userService.loadUserByUsername(username);
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                userLogin,
+                userLogin.getPassword(),
+                userLogin.getAuthorities()
+        );
+        context.setAuthentication(authenticationToken);
+        SecurityContextHolder.setContext(context);
+    }
+}
+```
+
+#### [TokenUserService](src\main\java\com\example\authentication_mybatis\token\TokenService.java) && [TokenController](src\main\java\com\example\authentication_mybatis\token\TokenController.java)
+```java
+public class TokenService {
+    private final TokenUtils tokenUtils;
+    private final UserService userService;
+    private final PasswordEncoder encoder;
+
+    public TokenResponse getToken(TokenRequest request){
+        UserLogin userLogin = (UserLogin) userService.loadUserByUsername(request.getUsername());
+        log.info(userLogin.toString());
+        if (!encoder.matches(request.getPassword(), userLogin.getPassword()))
+            throw new CustomException(HttpStatus.CONFLICT, "Wrong password!");
+        String token = tokenUtils.generateToken(request.getUsername());
+        return TokenResponse.builder().token(token).build();
+    }
+}
+```
+
+```java
+public class TokenController {
+    private final TokenService tokenService;
+    @PostMapping
+    public TokenResponse getToken(@RequestBody TokenRequest request){
+        return tokenService.getToken(request);
+    }
+}
+```
+
