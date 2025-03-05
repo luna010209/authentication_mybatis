@@ -40,7 +40,7 @@ public class UserService implements UserDetailsService {
                 .build();
         UserLogin userLogin = UserLogin.builder()
                 .username(request.getUsername())
-                .password(encoder.encode(request.getPassword()))
+                .hashedPw(encoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .name(request.getName())
                 .authority("ROLE_USER")

@@ -50,4 +50,8 @@ public class TokenUtils {
             throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    public Claims claims(String token){
+        return jwtParser.parseClaimsJws(token).getBody();
+    }
 }

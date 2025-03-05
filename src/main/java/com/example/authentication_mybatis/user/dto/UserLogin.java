@@ -2,9 +2,11 @@ package com.example.authentication_mybatis.user.dto;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,7 @@ import java.util.Map;
 public class UserLogin implements UserDetails, OAuth2User {
     private Long id;
     private String username;
-    private String password;
+    private String hashedPw;
     private String email;
     private String name;
     private String authority;
@@ -30,6 +32,12 @@ public class UserLogin implements UserDetails, OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        String[] authorityStrings= this.authority.split(",");
+        return Arrays.stream(authorityStrings).map(SimpleGrantedAuthority::new).toList();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.hashedPw;
     }
 }
