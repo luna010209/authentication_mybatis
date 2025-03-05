@@ -187,3 +187,52 @@ public class UserService implements UserDetailsService {
         return userService.newUser(request);
     }
 ```
+
+## Login for user through JWT
+### Create [dto with UserDetails](src\main\java\com\example\authentication_mybatis\user\dto\UserLogin.java)
+```java
+public class UserLogin implements UserDetails{
+    private Long id;
+    private String username;
+    private String hashedPw;
+    private String email;
+    private String name;
+    private String authority;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        String[] authorityStrings= this.authority.split(",");
+        return Arrays.stream(authorityStrings).map(SimpleGrantedAuthority::new).toList();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.hashedPw;
+    }
+}
+```
+
+### Use [`UserDetailsService`](src\main\java\com\example\authentication_mybatis\user\service\UserService.java)
+```java
+public class UserService implements UserDetailsService {
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserLogin userLogin = userMapper.findByUsername(username);
+        if (userLogin==null)
+            throw new CustomException(HttpStatus.NOT_FOUND, "Username does not exist!!");
+        return userLogin;
+    }
+
+    public UserDto newUser(UserRequest request){
+        UserLogin userLogin = UserLogin.builder()
+                .username(request.getUsername())
+                .hashedPw(encoder.encode(request.getPassword()))
+                .email(request.getEmail())
+                .name(request.getName())
+                .authority("ROLE_USER")
+                .build();
+        userMapper.userInfo(userLogin);
+    }
+}
+```
+
