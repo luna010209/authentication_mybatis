@@ -33,7 +33,7 @@ public class TokenUtils {
         Claims jwtClaims = Jwts.claims()
                 .setSubject(username)
                 .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plusSeconds(60*10)));
+                .setExpiration(Date.from(now.plusSeconds(60*30)));
         return Jwts.builder()
                 .setClaims(jwtClaims)
                 .signWith(secretKey)

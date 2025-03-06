@@ -37,16 +37,16 @@ public class TokenHandler extends OncePerRequestFilter {
 
         String token = splitHeader[1];
         String username = tokenUtils.claims(token).getSubject();
-
+        log.info(username);
         UserLogin userLogin = (UserLogin) userService.loadUserByUsername(username);
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userLogin,
                 userLogin.getPassword(),
                 userLogin.getAuthorities()
         );
-        context.setAuthentication(authenticationToken);
+        context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
         filterChain.doFilter(request, response);
     }
