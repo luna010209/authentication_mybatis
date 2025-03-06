@@ -311,3 +311,15 @@ public class TokenController {
 }
 ```
 
+### Set up for [Security Configuration](src\main\java\com\example\authentication_mybatis\config\SecurityConfig.java)
+```java
+@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        ...
+                .addFilterBefore(
+                        new TokenHandler(tokenUtils, userService),
+                        AuthorizationFilter.class
+                );
+        ...
+    }
+```
