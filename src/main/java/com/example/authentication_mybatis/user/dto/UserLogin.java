@@ -17,7 +17,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserLogin implements UserDetails, OAuth2User {
+public class UserLogin implements UserDetails {
     private Long id;
     private String username;
     private String hashedPw;
@@ -25,10 +25,10 @@ public class UserLogin implements UserDetails, OAuth2User {
     private String name;
     private String authority;
 
-    @Override
-    public Map<String, Object> getAttributes() {
-        return Map.of();
-    }
+//    @Override
+//    public Map<String, Object> getAttributes() {
+//        return Map.of();
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

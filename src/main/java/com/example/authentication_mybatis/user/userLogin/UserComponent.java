@@ -17,7 +17,6 @@ public class UserComponent {
     private final UserMapper userMapper;
     public UserDto userLogin(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.info(username);
         UserDto user = userMapper.userLogin(username);
         if (user==null)
             throw new CustomException(HttpStatus.NOT_FOUND, "No exist user login");
