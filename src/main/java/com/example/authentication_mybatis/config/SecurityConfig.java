@@ -2,6 +2,7 @@ package com.example.authentication_mybatis.config;
 
 import com.example.authentication_mybatis.exception.CustomException;
 import com.example.authentication_mybatis.token.TokenHandler;
+import com.example.authentication_mybatis.token.TokenOAuth2;
 import com.example.authentication_mybatis.token.TokenUtils;
 import com.example.authentication_mybatis.user.oauth2.KakaoLogin;
 import com.example.authentication_mybatis.user.oauth2.NaverLogin;
@@ -25,6 +26,7 @@ public class SecurityConfig {
     private final UserService userService;
     private final NaverLogin naverLogin;
     private final KakaoLogin kakaoLogin;
+    private final TokenOAuth2 tokenOAuth2;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -35,7 +37,12 @@ public class SecurityConfig {
                 .addFilterBefore(
                         new TokenHandler(tokenUtils, userService),
                         AuthorizationFilter.class
-                );
+                )
+                .oauth2Login(oauth2->oauth2
+                        .userInfoEndpoint(userInfo->userInfo
+                                .userService(oAuth2Provider()))
+                        .successHandler(tokenOAuth2)
+                        .permitAll());
         return http.build();
     }
 
