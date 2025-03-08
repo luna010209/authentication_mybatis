@@ -35,8 +35,9 @@ public class TokenService {
     }
 
     public TokenResponse getTokenOAuth2(){
-        UserLogin user = userComponent.userLogin();
+        UserDto user = userComponent.userLogin();
         String token = tokenUtils.generateToken(user.getUsername());
         return TokenResponse.builder().token(token).build();
     }
+
 }

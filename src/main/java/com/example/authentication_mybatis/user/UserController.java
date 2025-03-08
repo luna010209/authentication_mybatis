@@ -16,8 +16,9 @@ public class UserController {
     public UserDto newUser(@RequestBody UserRequest request){
         return userService.newUser(request);
     }
+
     @GetMapping
-    public UserLogin userLogin(){
+    public UserDto userLogin(){
         return userService.userLogin();
     }
 }

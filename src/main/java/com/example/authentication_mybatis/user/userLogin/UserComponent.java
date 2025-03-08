@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class UserComponent {
     private final UserMapper userMapper;
-    public UserLogin userLogin(){
+    public UserDto userLogin(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserLogin user = userMapper.findByUsername(username);
+        UserDto user = userMapper.userDto(username);
         if (user==null)
             throw new CustomException(HttpStatus.NOT_FOUND, "No exist user login");
         return user;

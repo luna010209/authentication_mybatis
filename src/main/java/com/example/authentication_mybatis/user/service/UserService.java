@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
         return dto;
     }
 
-    public UserLogin userLogin(){
+    public UserDto userLogin(){
         return userComponent.userLogin();
     }
 }
