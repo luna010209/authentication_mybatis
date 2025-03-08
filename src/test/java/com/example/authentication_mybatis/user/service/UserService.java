@@ -78,4 +78,16 @@ public class UserService implements UserDetailsService {
         userMapper.updateLogin(userLogin);
         return user;
     }
+
+    public String updatePw(UserRequest request){
+        UserDto user = userComponent.userLogin();
+        UserLogin userLogin = userMapper.findByUsername(user.getUsername());
+        if (!encoder.matches(request.getPassword(), userLogin.getPassword()))
+            throw new CustomException(HttpStatus.CONFLICT, "Wrong password!");
+        else if (!request.getNewPw().equals(request.getPwConfirm()))
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Password and password confirm do not match!");
+        userLogin.setHashedPw(encoder.encode(request.getNewPw()));
+        userMapper.updateLogin(userLogin);
+        return "Change password successfully";
+    }
 }

@@ -26,4 +26,9 @@ public class UserController {
     public UserDto updateUser(@RequestBody UserRequest request){
         return userService.updateUser(request);
     }
+
+    @PutMapping("change-pw")
+    public String updatePw(@RequestBody UserRequest request){
+        return userService.updatePw(request);
+    }
 }
