@@ -23,8 +23,15 @@
         VALUES (#{username}, #{hashedPw}, #{email}, #{name}, #{authority})
     </insert>
 
-    <select id="findByUsername" resultType="com.example.authentication_mybatis.user.dto.UserLogin" parameterType="string">
-        SELECT * FROM login_info l WHERE l.username=#{username};
+    <select id="userDto" resultType="com.example.authentication_mybatis.user.dto.UserDto" parameterType="string">
+        SELECT * FROM user_account u WHERE u.username=#{username};
     </select>
 
+    <select id="findByUsername" resultType="com.example.authentication_mybatis.user.dto.UserLogin" parameterType="string">
+        SELECT * FROM login_info l WHERE l.username = #{username};
+    </select>
+
+    <select id="findByEmail" resultType="com.example.authentication_mybatis.user.dto.UserLogin" parameterType="string">
+        SELECT * FROM login_info l WHERE l.email = #{email};
+    </select>
 </mapper>
