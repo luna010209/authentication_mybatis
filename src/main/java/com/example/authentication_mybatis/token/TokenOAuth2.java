@@ -17,7 +17,7 @@ public class TokenOAuth2 extends SimpleUrlAuthenticationSuccessHandler {
             HttpServletResponse response,
             Authentication authentication
     ) throws IOException, ServletException {
-        String targetUrl = "http://127.0.0.1:8080/token";
+        String targetUrl = "http://127.0.0.1:8080/token/oauth2";
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }

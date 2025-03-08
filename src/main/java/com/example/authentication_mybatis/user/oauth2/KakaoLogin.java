@@ -2,6 +2,7 @@ package com.example.authentication_mybatis.user.oauth2;
 
 import com.example.authentication_mybatis.exception.CustomException;
 import com.example.authentication_mybatis.user.dto.UserDto;
+import com.example.authentication_mybatis.user.dto.UserLogin;
 import com.example.authentication_mybatis.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,18 +28,26 @@ public class KakaoLogin extends DefaultOAuth2UserService {
         String email = map.get("email").toString();
         String name = map.get("name").toString();
 
+        UserLogin userLogin;
         if (userMapper.existsByUsername(username))
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Username already exists!!!");
+            userLogin = userMapper.findByUsername(username);
         else if (userMapper.existsByEmail(email))
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Email already exists!!");
+            userLogin = userMapper.findByEmail(email);
+        else{
+            userLogin = UserLogin.builder()
+                    .username(username)
+                    .email(email)
+                    .name(name)
+                    .authority("ROLE_USER").build();
+            userMapper.userInfo(userLogin);
+            UserDto user = UserDto.builder()
+                    .username(username)
+                    .email(email)
+                    .name(name)
+                    .build();
+            userMapper.createUser(user);
+        }
 
-        UserDto user = UserDto.builder()
-                .username(username)
-                .email(email)
-                .name(name)
-                .authority("ROLE_USER")
-                .build();
-        userMapper.createUser(user);
-        return new DefaultOAuth2User(user.getAuthorities(), user.getAttributes(), "username");
+        return new DefaultOAuth2User(userLogin.getAuthorities(), userLogin.getAttributes(), "username");
     }
 }

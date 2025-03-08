@@ -2,6 +2,7 @@ package com.example.authentication_mybatis.user.oauth2;
 
 import com.example.authentication_mybatis.exception.CustomException;
 import com.example.authentication_mybatis.user.dto.UserDto;
+import com.example.authentication_mybatis.user.dto.UserLogin;
 import com.example.authentication_mybatis.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,17 +28,26 @@ public class NaverLogin extends DefaultOAuth2UserService {
         String name = responseMap.get("name").toString();
         String email = responseMap.get("email").toString();
 
+        UserLogin user;
         if (userMapper.existsByUsername(username))
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Username already exists");
+            user = userMapper.findByUsername(username);
         else if (userMapper.existsByEmail(email))
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Email already exists");
-        UserDto user= UserDto.builder()
-                .username(username)
-                .name(name)
-                .email(email)
-                .authority("ROLE_USER")
-                .build();
-        userMapper.createUser(user);
+            user = userMapper.findByEmail(email);
+        else {
+            UserDto newUser = UserDto.builder()
+                    .username(username)
+                    .name(name)
+                    .email(email)
+                    .build();
+            user = UserLogin.builder()
+                    .username(username)
+                    .name(name)
+                    .email(email)
+                    .authority("ROLE_USER")
+                    .build();
+            userMapper.createUser(newUser);
+            userMapper.userInfo(user);
+        }
         return new DefaultOAuth2User(user.getAuthorities(), user.getAttributes(), "username");
     }
 }

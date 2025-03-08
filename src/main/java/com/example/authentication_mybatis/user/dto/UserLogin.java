@@ -6,10 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -17,7 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserLogin implements UserDetails {
+public class UserLogin implements UserDetails, OAuth2User {
     private Long id;
     private String username;
     private String hashedPw;
@@ -25,10 +22,14 @@ public class UserLogin implements UserDetails {
     private String name;
     private String authority;
 
-//    @Override
-//    public Map<String, Object> getAttributes() {
-//        return Map.of();
-//    }
+    @Override
+    public Map<String, Object> getAttributes() {
+        Map<String, Object> map= new HashMap<>();
+        map.put("username", username);
+        map.put("email", email);
+        map.put("name", name);
+        return map;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

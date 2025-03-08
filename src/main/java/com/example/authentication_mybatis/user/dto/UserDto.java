@@ -13,25 +13,10 @@ import java.util.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserDto implements OAuth2User {
+public class UserDto {
     private Long id;
     private String username;
     private String email;
     private String name;
-    private String authority;
 
-    @Override
-    public Map<String, Object> getAttributes() {
-        Map<String, Object> map= new HashMap<>();
-        map.put("username", username);
-        map.put("email", email);
-        map.put("name", name);
-        return map;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        String[] authorities = this.authority.split(" ");
-        return Arrays.stream(authorities).map(SimpleGrantedAuthority::new).toList();
-    }
 }
