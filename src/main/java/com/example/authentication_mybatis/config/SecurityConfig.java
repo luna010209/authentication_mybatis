@@ -10,6 +10,7 @@ import com.example.authentication_mybatis.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,8 +32,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->{
-//                    auth.requestMatchers("").authenticated();
-                    auth.anyRequest().permitAll();
+                    auth.requestMatchers("/token/**", "/static/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/user").permitAll();
+                    auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(
                         new TokenHandler(tokenUtils, userService),
