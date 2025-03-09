@@ -14,8 +14,8 @@
     </select>
 
     <insert id="createUser" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user_account(username, email, name)
-        VALUES (#{username}, #{email}, #{name})
+        INSERT INTO user_account(username, email, name, avatar)
+        VALUES (#{username}, #{email}, #{name}, #{avatar})
     </insert>
 
     <insert id="userInfo" useGeneratedKeys="true" keyProperty="id">
@@ -34,4 +34,23 @@
     <select id="findByEmail" resultType="com.example.authentication_mybatis.user.dto.UserLogin" parameterType="string">
         SELECT * FROM login_info l WHERE l.email = #{email};
     </select>
+
+    <update id="updateUser" parameterType="com.example.authentication_mybatis.user.dto.UserDto">
+        UPDATE user_account u
+        SET   u.username= #{username}
+            , u.name = #{name}
+            , u.email = #{email}
+            , u.avatar = #{avatar}
+        WHERE u.id = #{id}
+    </update>
+
+    <update id="updateLogin" parameterType="com.example.authentication_mybatis.user.dto.UserLogin">
+        UPDATE login_info l
+        SET   l.username= #{username}
+            , l.name = #{name}
+            , l.email = #{email}
+            , l.hashedPw = #{hashedPw}
+        WHERE l.id = #{id}
+    </update>
+
 </mapper>
