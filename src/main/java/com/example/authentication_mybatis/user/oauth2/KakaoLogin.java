@@ -44,6 +44,7 @@ public class KakaoLogin extends DefaultOAuth2UserService {
                     .username(username)
                     .email(email)
                     .name(name)
+                    .avatar("/static/visual/user.png")
                     .build();
             userMapper.createUser(user);
         }

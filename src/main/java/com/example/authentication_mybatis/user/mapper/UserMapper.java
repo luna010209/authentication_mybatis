@@ -13,4 +13,7 @@ public interface UserMapper {
     UserDto userDto(String username);
     UserLogin findByUsername(String username);
     UserLogin findByEmail(String email);
+
+    void updateUser(UserDto dto);
+    void updateLogin(UserLogin userLogin);
 }

@@ -6,6 +6,7 @@ import com.example.authentication_mybatis.user.dto.UserRequest;
 import com.example.authentication_mybatis.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,5 +21,20 @@ public class UserController {
     @GetMapping
     public UserDto userLogin(){
         return userService.userLogin();
+    }
+
+    @PutMapping
+    public UserDto updateUser(@RequestBody UserRequest request){
+        return userService.updateUser(request);
+    }
+
+    @PutMapping("change-pw")
+    public String updatePw(@RequestBody UserRequest request){
+        return userService.updatePw(request);
+    }
+
+    @PutMapping("change-avatar")
+    public String updateAvatar(@RequestParam MultipartFile file){
+        return userService.updateAvatar(file);
     }
 }

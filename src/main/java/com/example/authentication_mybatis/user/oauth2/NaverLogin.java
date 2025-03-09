@@ -38,6 +38,7 @@ public class NaverLogin extends DefaultOAuth2UserService {
                     .username(username)
                     .name(name)
                     .email(email)
+                    .avatar("/static/visual/user.png")
                     .build();
             user = UserLogin.builder()
                     .username(username)
