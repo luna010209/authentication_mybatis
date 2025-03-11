@@ -3,10 +3,10 @@ spring:
     name: authentication
 
   datasource:
-    url: jdbc:mysql://localhost:3306/authentication
+    url: jdbc:mysql://<ip address>:<port>/<db>
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: Mlkfpt@2001
+    username: <username>
+    password: <password>
 
   security:
     oauth2:
@@ -26,8 +26,8 @@ spring:
 
         registration:
           naver:
-            client-id: rGBK9I5882WT2X9ysfxh
-            client-secret: WNMmTOrB2H
+            client-id: <client_id>
+            client-secret: <secret>
             redirect-uri: http://127.0.0.1:8080/login/oauth2/code/naver
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
@@ -39,7 +39,7 @@ spring:
               - phone
 
           kakao:
-            client-id: 75c8bfb6c3e2568c7828c7b198b1d264
+            client-id: <client_id>
             redirect-uri: http://127.0.0.1:8080/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
@@ -56,7 +56,7 @@ mybatis:
   mapper-locations: classpath:mapper/*.xml
 
 jwt:
-  secret: v^K#V@igLXJrBvgY^%gKGy4-GsY51jrun:?C38FY?8h%]t_rd]E@nhL?de3tR>?
+  secret: <jwt_secret>
 
 
 
