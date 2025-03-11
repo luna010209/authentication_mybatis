@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface EmailMapper {
     void createCode(EmailDto emailDto);
+    EmailDto findByEmail(String email);
+    void verifyCode(String email);
 }
