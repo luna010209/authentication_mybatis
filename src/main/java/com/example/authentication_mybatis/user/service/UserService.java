@@ -1,5 +1,7 @@
 package com.example.authentication_mybatis.user.service;
 
+import com.example.authentication_mybatis.emailVerify.dto.EmailDto;
+import com.example.authentication_mybatis.emailVerify.mapper.EmailMapper;
 import com.example.authentication_mybatis.exception.CustomException;
 import com.example.authentication_mybatis.user.dto.UserDto;
 import com.example.authentication_mybatis.user.dto.UserLogin;
@@ -24,6 +26,7 @@ import java.nio.file.Path;
 public class UserService implements UserDetailsService {
     private final PasswordEncoder encoder;
     private final UserMapper userMapper;
+    private final EmailMapper emailMapper;
     private final UserComponent userComponent;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,6 +41,10 @@ public class UserService implements UserDetailsService {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Username already exists!");
         else if (userMapper.existsByEmail(request.getEmail()))
             throw new CustomException(HttpStatus.BAD_REQUEST, "Email already exists!");
+        // Check email for verification
+        EmailDto email = emailMapper.findByEmail(request.getEmail());
+        if (email==null || !email.isSuccess())
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Your email is not verified!");
         else if (!request.getPassword().equals(request.getPwConfirm()))
             throw new CustomException(HttpStatus.CONFLICT, "Password and password confirm do not match!");
         UserDto dto = UserDto.builder()
