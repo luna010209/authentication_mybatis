@@ -7,5 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface EmailMapper {
     void createCode(EmailDto emailDto);
     EmailDto findByEmail(String email);
+    boolean existsByEmail(String email);
     void verifyCode(String email);
+    void resendCode(EmailDto emailDto);
 }

@@ -21,6 +21,8 @@ public class EmailService {
     private final ApplicationEventPublisher publisher;
 
     public String sendEmail(EmailRequest request){
+        if (emailMapper.existsByEmail(request.getEmail()))
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Email already exists");
         SecureRandom random = new SecureRandom();
         Integer verifiedCode = 100000+ random.nextInt(900000);
         publisher.publishEvent(new EmailListener(request.getEmail(), verifiedCode));
@@ -41,5 +43,20 @@ public class EmailService {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Wrong verified code!");
         emailMapper.verifyCode(request.getEmail());
         return "Verify successfully!";
+    }
+
+    public String resendCode(EmailRequest request){
+        EmailDto email = emailMapper.findByEmail(request.getEmail());
+        if (email==null)
+            throw new CustomException(HttpStatus.NOT_FOUND, "No exist email");
+        else if (email.isSuccess())
+            throw new CustomException(HttpStatus.BAD_REQUEST, "This email is already verified!");
+        SecureRandom random = new SecureRandom();
+        Integer code = 100000+ random.nextInt(900000);
+        publisher.publishEvent(new EmailListener(email.getEmail(), code));
+        email.setCode(code);
+        email.setExpiration(Date.from(Instant.now().plusSeconds(60*10)));
+        emailMapper.resendCode(email);
+        return "Please check your email again!";
     }
 }
