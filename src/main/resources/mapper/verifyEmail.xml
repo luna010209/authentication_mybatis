@@ -12,9 +12,20 @@
         SELECT * FROM email_verify WHERE email= #{email};
     </select>
 
+    <select id="existsByEmail" parameterType="string" resultType="boolean">
+        SELECT COUNT(*) FROM email_verify WHERE email= #{email};
+    </select>
+
     <update id="verifyCode" parameterType="string">
         UPDATE email_verify
         SET isSuccess = true
+        WHERE email = #{email}
+    </update>
+
+    <update id="resendCode" parameterType="com.example.authentication_mybatis.emailVerify.dto.EmailDto">
+        UPDATE email_verify
+        SET   code = #{code}
+            , expiration = #{expiration}
         WHERE email = #{email}
     </update>
 </mapper>
