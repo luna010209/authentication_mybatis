@@ -4,10 +4,7 @@ import com.example.authentication_mybatis.emailVerify.dto.EmailDto;
 import com.example.authentication_mybatis.emailVerify.dto.EmailRequest;
 import com.example.authentication_mybatis.emailVerify.service.EmailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,5 +18,9 @@ public class EmailController {
     @PostMapping
     public String verifyCode(@RequestBody EmailRequest request){
         return emailService.verifyCode(request);
+    }
+    @PutMapping("resend")
+    public String resendCode(@RequestBody EmailRequest request){
+        return emailService.resendCode(request);
     }
 }
