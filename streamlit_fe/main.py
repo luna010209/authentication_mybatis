@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-
+import requests
 
 st.title("🌟 Welcome to Luna's universe 💪")
 
@@ -42,20 +42,51 @@ if confirmPw:
 fullname = st.text_input("😊 Your fullname")
 
 # Input email
-import time
-from math import floor
 
+col1, col2 = st.columns([5,1])
 patternEmail = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-email = st.text_input("📩 Your email")
+with col1: email = st.text_input("📩 Your email")
+with col2: 
+  st.markdown("<br>", unsafe_allow_html=True)
+  verify = st.button("Verify email")
 
 validEmail = False
-col1, col2, col3 = st.columns([1,3,1])
-with col1: verify = st.button("Verify email")
-  
-if email:
-  if verify:
-    with col2: code = st.text_input("", placeholder="Verified code", label_visibility="collapsed")
-    with col3: time 
+
+col3, col4, col5= st.columns([1,4,1])
+with col4: 
+  code = st.text_input("", placeholder="Verified code", label_visibility="collapsed")
+with col5: 
+  sendCode = st.button("Send code")
+
+if verify:
+  if email:
+    try:
+      response = requests.post(
+        "http://127.0.0.1:8080/email/sending",
+        json={"email": email},
+        headers={"Content-Type":"application/json"}
+      )
+      if response.status_code==200:
+        mes= response.text
+        st.success(mes)
+        if code:
+          if sendCode:
+            try:
+              response2 = requests.post(
+                "http://127.0.0.1:8080/email/sending",
+                json={"email": email},
+                headers={"Content-Type":"application/json"}
+              )
+            except Exception as e:
+              st.error(f"Error: {e}")
+    except Exception as e:
+      st.error(f"Error: {e}")
+  else:
+    st.warning("Please input your email")
+
+
+      
+
     
 
 
