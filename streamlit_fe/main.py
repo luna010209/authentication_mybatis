@@ -35,55 +35,85 @@ confirmValid = False
 if confirmPw:
   if confirmPw == password:
     st.success("✅ Confirm password is valid")
+    confirmValid=True
   else:
     st.error("❌ Your password and confirm password do not match")
 
 # Input fullname
 fullname = st.text_input("😊 Your fullname")
 
+
 # Input email
 
+validEmail = False
+
 col1, col2 = st.columns([5,1])
-patternEmail = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 with col1: email = st.text_input("📩 Your email")
 with col2: 
   st.markdown("<br>", unsafe_allow_html=True)
   verify = st.button("Verify email")
 
-validEmail = False
-
 col3, col4, col5= st.columns([1,4,1])
 with col4: 
-  code = st.text_input("", placeholder="Verified code", label_visibility="collapsed")
+  code = st.text_input("Input code", placeholder="Verified code", label_visibility="collapsed")
 with col5: 
   sendCode = st.button("Send code")
 
+mes= st.empty()
 if verify:
   if email:
     try:
       response = requests.post(
         "http://127.0.0.1:8080/email/sending",
         json={"email": email},
-        headers={"Content-Type":"application/json"}
+        headers={"Content-Type": "application/json"}
       )
       if response.status_code==200:
-        mes= response.text
-        st.success(mes)
-        if code:
-          if sendCode:
-            try:
-              response2 = requests.post(
-                "http://127.0.0.1:8080/email/sending",
-                json={"email": email},
-                headers={"Content-Type":"application/json"}
-              )
-            except Exception as e:
-              st.error(f"Error: {e}")
+        mes.success(response.text)
+      else: mes.warning(response.text)
     except Exception as e:
       st.error(f"Error: {e}")
   else:
     st.warning("Please input your email")
 
+if sendCode:
+  if email:
+    if code:
+      try:
+        response2 = requests.post(
+                  "http://127.0.0.1:8080/email",
+                  json={"email": email, "code":code},
+                  headers={"Content-Type": "application/json"}
+                )
+        if response2.status_code==200:
+          mes.success(response2.text)
+          validEmail=True
+        else: mes.warning(response2.text)
+      except Exception as e:
+          st.error(f"Error: {e}")
+    else: st.warning("Please input your code")
+  else: st.warning("Please input your email")
+
+if st.button("Register"):
+  if username and password and confirmPw and fullname and email:
+    if validUn and validPw and confirmValid:
+      try:
+        res3= requests.post(
+          "http://127.0.0.1:8080/user",
+          json={"username": username,
+                "password": password,
+                "pwConfirm": confirmPw,
+                "email":email,
+                "name": fullname},
+          headers={"Content-Type": "application/json"}
+        )
+        if res3.status_code==200:
+          st.success("Register successful!!")
+        else: st.error(res3.text)
+      except Exception as e:
+        st.error(f"Error: {e}")
+    else: st.error("Please check your information again")
+  else: st.error("Please check your information again")
 
       
 
